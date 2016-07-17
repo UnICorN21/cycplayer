@@ -47,6 +47,14 @@ export default class SingleSong extends React.Component {
         this.canvasCtx = canvasDOM.getContext('2d');
         this.animate();
     }
+    control() {
+        this.setState({ playing: !this.state.playing });
+        setTimeout(() => {
+            if (this.state.playing) this.audioDOM.play();
+            else this.audioDOM.pause();
+            // TODO: Update UI!
+        }, 0);
+    }
     animate() {
         this.canvasCtx.clearRect(0, 0, this.props.width, this.props.height);
 
@@ -60,8 +68,8 @@ export default class SingleSong extends React.Component {
         requestAnimationFrame(this.animate.bind(this));
         for (var i = 0; i < this.analyser.frequencyBinCount; i += 3) {
             let theta = i * Math.PI / (this.analyser.frequencyBinCount),
-                inside = this.state.playing ? (this.timeBuff[i] - 128) * radius / 128 : -1,
-                outside = this.state.playing ? (this.freqBuff[i] - 100) * radius / 256 : 0;
+                inside = this.state.progress > 1 ? (this.timeBuff[i] - 128) * radius / 128 : -1,
+                outside = this.state.progress > 1 ? (this.freqBuff[i] - 100) * radius / 256 : 0;
             this.canvasCtx.save();
             this.canvasCtx.translate(centerX, centerY);
             this.canvasCtx.rotate(Math.PI + theta * (i % 2 ? -1 : 1));
@@ -97,11 +105,14 @@ export default class SingleSong extends React.Component {
             <div className="song-wrapper">
                 <div className="artwork" style={artworkStyle}/>
                 <h3>{this.props.song.name}</h3>
-                <div className="control-panel" style={ {width: this.state.canvasLength - 250} }>
+                <div className="progress-bar" style={ {width: this.state.canvasLength - 250} }>
+                    <div className="progress-bar-wrapper">
                     <hr className="timeline" style={ {width: this.state.canvasLength - 250} }/>
                     <div className="cursor-border" style={ {left: `${this.state.progress}%`} }/>
                     <div className="cursor-point" style={ {left: `${this.state.progress}%`} }/>
+                    </div>
                 </div>
+                <button className="control-btn" onClick={this.control.bind(this)}>control</button>
                 <audio ref="audio" src={this.props.song.src} autoPlay="true"/>
                 <canvas ref="canvas" width={this.state.canvasLength} height={this.state.canvasLength}/>
             </div>

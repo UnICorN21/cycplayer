@@ -17,12 +17,14 @@
     "del": "^2.2.1",
     "flow-bin": "^0.28.0",
     "gulp": "^3.9.1",
+    "gulp-util": "^3.0.7",
     "node-sass": "^3.8.0",
     "postcss-loader": "^0.9.1",
     "sass-loader": "^4.0.0",
     "source-map-loader": "^0.1.5",
     "style-loader": "^0.13.1",
     "webpack": "^1.13.1",
+    "webpack-dev-server": "^1.14.1",
     "webpack-stream": "^3.2.0"
   }
 }

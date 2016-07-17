@@ -3,8 +3,9 @@
  * Created by Huxley on 7/15/16.
  */
 var gulp = require('gulp'),
-    webpackStream = require('webpack-stream'),
+    gutil = require('gulp-util'),
     webpack = require('webpack'),
+    webpackDevServer = require('webpack-dev-server'),
     autoprefixer = require('autoprefixer'),
     del = require('del');
 
@@ -14,47 +15,64 @@ function build(env) {
         return;
     }
     gulp.src('src/*.html').pipe(gulp.dest('build'));
-    return gulp.src('src/main.js')
-        .pipe(webpackStream({
-            output: {
-                filename: 'bundle.js'
-            },
-            watch: env === 'development',
-            module: {
-                loaders: [
-                    {
-                        test: /\.scss$/,
-                        loader: "style!css!postcss-loader!sass"
-                    },
-                    {
-                        test: /\.jsx?$/,
-                        loader: 'babel',
-                        exclude: /node_modules/,
-                    }
-                ]
-            },
-            postcss: function() {
-                return [autoprefixer];
-            },
-            devtool: env === 'development' ? 'source-map' : '',
-            plugins: (function() {
-                var ret = [
-                    new webpack.NoErrorsPlugin()
-                ];
-                if ('development' === env) {
-                    ret.push(new webpack.HotModuleReplacementPlugin());
-                } else {
-                    ret.push(new webpack.optimize.DedupePlugin());
-                    ret.push(new webpack.optimize.UglifyJsPlugin());
+    var compiler = webpack({
+        entry: "./src/main.js",
+        output: {
+            path: require('path').resolve('./build/'),
+            filename: 'bundle.js'
+        },
+        watch: env === 'development',
+        module: {
+            loaders: [
+                {
+                    test: /\.scss$/,
+                    loader: "style!css!postcss-loader!sass"
+                },
+                {
+                    test: /\.jsx?$/,
+                    loader: 'babel',
+                    exclude: /node_modules/,
                 }
-                return ret;
-            })()
-        }))
-        .pipe(gulp.dest('build'));
+            ]
+        },
+        postcss: function() {
+            return [autoprefixer];
+        },
+        devtool: env === 'development' ? 'source-map' : '',
+        plugins: (function() {
+            var ret = [
+                new webpack.NoErrorsPlugin()
+            ];
+            if ('development' === env) {
+                ret.push(new webpack.HotModuleReplacementPlugin());
+            } else {
+                ret.push(new webpack.optimize.DedupePlugin());
+                ret.push(new webpack.optimize.UglifyJsPlugin());
+                ret.push(new webpack.DefinePlugin({
+                    "process.env": {
+                        "NODE_ENV": JSON.stringify("production")
+                    }
+                }));
+            }
+            return ret;
+        })(),
+    });
+    if ('development' === env) {
+        new webpackDevServer(compiler, {
+            hot: true,
+            contentBase: './build/'
+        }).listen(8080, "localhost", function (err) {
+            if (err) throw new gutil.PluginError("webpack-dev-server", err);
+        });
+    } else {
+        compiler.run(function(err, stats) {
+            // TODO
+        });
+    }
 }
 
 gulp.task('clean', function() {
-    return del.sync('build/*');
+    return del.sync(['build/*', '!build/data/*']);
 });
 
 gulp.task('release', ['clean'], function() {

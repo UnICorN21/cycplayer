@@ -17,15 +17,27 @@
     color: white;
   }
 
-  .control-panel {
+  .control-btn {
+    position: absolute;
+    left: 50%;
+    top: 60%;
+    transform: translate(-50%, 0);
+  }
+
+  .progress-bar {
     position: absolute;
     text-align: center;
+    height: 80px;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    transition: all 200ms;
-    &:hover {
-      .timeline, .cursor-border { box-shadow: 0 0 1em white; }
+
+    .progress-bar-wrapper {
+      position: relative;
+      width: 100%; height: 100%;
+      &:hover {
+        .timeline, .cursor-border { box-shadow: 0 0 1em white; }
+      }
     }
 
     .timeline {
@@ -37,6 +49,7 @@
       border: 0;
       height: 1px;
       margin: 0;
+      transition: box-shadow 1s;
     }
 
     .cursor-border {
@@ -44,7 +57,7 @@
       position: absolute;
       top: 50%;
       transform: translate(-50%, -50%);
-      transition: all 200ms;
+      transition: box-shadow 1s, left 100ms;
       border-radius: 50%;
       border: 1px solid rgba(255, 255, 255, 0.25);
       background: rgba(255, 255, 255, 0.15);
@@ -59,7 +72,7 @@
       border-radius: 50%;
       width: 8px;
       height: 8px;
-      transition: all 200ms;
-      }
+      transition: all 100ms;
+     }
   }
 }

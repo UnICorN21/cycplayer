@@ -7,9 +7,9 @@ import ReactDOM from 'react-dom';
 import SingleSong from './singlesong.jsx';
 
 var song = {
-    name: 'ninelie',
-    src: '../data/ninelie.mp3',
-    artwork: '../data/ninelie.jpg'
+    name: '夏祭り',
+    src: '/data/夏祭り.mp3',
+    artwork: '/data/夏祭り.jpg'
 };
 
 var container = document.getElementById('container');
