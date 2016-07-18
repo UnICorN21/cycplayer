@@ -86,3 +86,8 @@ gulp.task('release', ['clean'], function() {
 gulp.task('debug', ['clean'], function () {
     return build('development');
 });
+
+gulp.task('publish', ['release'], function() {
+    // TODO: Copy the contents in `build` dir to the `gh-pages` branch, and
+    // make a commit/push then.
+});
