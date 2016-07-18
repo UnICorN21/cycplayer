@@ -112,7 +112,7 @@ export default class SingleSong extends React.Component {
             position: 'absolute',
             width: this.props.width,
             height: this.props.height,
-            background: this.state.hasBackground ? `url(${this.props.song.artwork})` : 'black',
+            background: this.state.hasBackground ? `url('${this.props.song.artwork}')` : 'black',
             backgroundSize: '100%',
         };
         return (
