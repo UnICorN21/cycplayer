@@ -5,6 +5,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import SingleSong from './singlesong.jsx';
+import Cover from './cover.jsx';
 
 var song = {
     name: '夏祭り',
@@ -13,4 +14,4 @@ var song = {
 };
 
 var container = document.getElementById('container');
-ReactDOM.render(<SingleSong song={song}/>, container);
+ReactDOM.render(<Cover/>, container);

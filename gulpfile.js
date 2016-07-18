@@ -10,7 +10,7 @@ var gulp = require('gulp'),
     del = require('del');
 
 function build(env) {
-    if (!['production', 'development'].some(v => v == env)) {
+    if (!['production', 'development'].some(function(v) { return v === env; })) {
         console.log('bad build argument: ' + env);
         return;
     }
@@ -24,6 +24,10 @@ function build(env) {
         watch: env === 'development',
         module: {
             loaders: [
+                {
+                    test: /\.(svg|png)$/,
+                    loader: "file"
+                },
                 {
                     test: /\.scss$/,
                     loader: "style!css!postcss-loader!sass"
@@ -72,7 +76,7 @@ function build(env) {
 }
 
 gulp.task('clean', function() {
-    return del.sync(['build/*', '!build/data/*']);
+    return del.sync(['build/*', '!build/data']);
 });
 
 gulp.task('release', ['clean'], function() {

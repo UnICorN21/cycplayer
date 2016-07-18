@@ -4,6 +4,12 @@
   100% { width: 20px; height: 20px; }
 }
 
+@keyframes songNameEffect {
+  0% { text-shadow: 0 0 0 white; }
+  50% { text-shadow: 0 0 1em white; }
+  100% { text-shadow: 0 0 0 white; }
+}
+
 .song-wrapper {
   display: inline-block;
   position: relative;
@@ -15,6 +21,9 @@
     font-size: 32px;
     margin: 10px;
     color: white;
+    &.playing {
+      animation: 5s ease-in-out infinite songNameEffect;
+    }
   }
 
   .control-btn {
@@ -22,12 +31,41 @@
     left: 50%;
     top: 60%;
     transform: translate(-50%, 0);
+    opacity: 0;
+    transition: all 800ms;
+
+    &:hover {
+      opacity: 1;
+    }
+
+    .play-btn, .pause-btn { display: none; }
+    .onshow { display: block !important; }
+
+    .play-btn {
+      width: 0;  height: 0;
+      border-top: 30px solid transparent;
+      border-bottom: 30px solid transparent;
+      border-right: 0 solid transparent;
+      border-left: 50px solid white;
+    }
+
+    .pause-btn {
+      position: relative;
+      width: 50px; height: 60px;
+      .left, .right {
+        background: white;
+        height: 100%;
+        width: 17px;
+      }
+      .left { float: left; }
+      .right { float: right; }
+    }
   }
 
   .progress-bar {
     position: absolute;
     text-align: center;
-    height: 80px;
+    height: 50px;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
@@ -49,19 +87,25 @@
       border: 0;
       height: 1px;
       margin: 0;
-      transition: box-shadow 1s;
+      transition: box-shadow 800ms;
     }
 
     .cursor-border {
       z-index: 1;
       position: absolute;
       top: 50%;
+      width: 8px; height: 8px;
       transform: translate(-50%, -50%);
-      transition: box-shadow 1s, left 100ms;
+      transition: all 200ms, box-shadow 800s;
       border-radius: 50%;
       border: 1px solid rgba(255, 255, 255, 0.25);
       background: rgba(255, 255, 255, 0.15);
-      animation: 1.6s ease-in-out infinite borderEffect;
+
+      &.playing {
+        width: 20px; height: 20px;
+        animation: 1.6s ease-in-out infinite borderEffect;
+        animation-delay: 200ms;
+      }
     }
     .cursor-point {
       z-index: 2;
@@ -72,7 +116,7 @@
       border-radius: 50%;
       width: 8px;
       height: 8px;
-      transition: all 100ms;
+      transition: all 200ms;
      }
   }
 }
