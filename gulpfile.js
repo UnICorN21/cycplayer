@@ -97,18 +97,18 @@ gulp.task('publish', ['clean'], function() {
              if (err) throw err;
              git.checkout('gh-pages', function(err) {
                  if (err) throw err;
-                 ncp('/tmp/build', './', function(err) {
+                 ncp('/tmp/build/*', './', function(err) {
                      gulp.src('./*').pipe(git.commit('auto commit', {emitData: true})).
                      on('data', function(data) {
                          console.log(data);
-                         git.push('origin/gh-pages', 'gh-pages', function(err) {
-                             if (err) throw err;
-                             git.checkout('master', function(err) {
-                                 if (err) throw err;
-                                 del.sync('/tmp/build');
-                                 console.log('Auto commit completed.');
-                             });
-                         });
+                         // git.push('origin/gh-pages', 'gh-pages', function(err) {
+                         //     if (err) throw err;
+                         //     git.checkout('master', function(err) {
+                         //         if (err) throw err;
+                         //         del.sync('/tmp/build');
+                         //         console.log('Auto commit completed.');
+                         //     });
+                         // });
                      });
                  });
              });
