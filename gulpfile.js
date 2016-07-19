@@ -9,7 +9,7 @@ var gulp = require('gulp'),
     autoprefixer = require('autoprefixer'),
     del = require('del'),
     runSequence = require('run-sequence'),
-    ncp = require('ncp').ncp,
+    fs = require('fs-extra'),
     git = require('gulp-git');
 
 function build(env, cb) {
@@ -93,11 +93,11 @@ gulp.task('debug', ['clean'], function () {
 
 gulp.task('publish', ['clean'], function() {
     build('production', function() {
-         ncp('./build', '/tmp/build', function(err) {
+         fs.copy('./build', '/tmp/build', function(err) {
              if (err) throw err;
              git.checkout('gh-pages', function(err) {
                  if (err) throw err;
-                 ncp('/tmp/build/*', './', function(err) {
+                 fs.move('/tmp/build/*', './', function(err) {
                      gulp.src('./*').pipe(git.commit('auto commit', {emitData: true})).
                      on('data', function(data) {
                          console.log(data);
