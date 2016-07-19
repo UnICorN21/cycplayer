@@ -8,9 +8,11 @@ var gulp = require('gulp'),
     webpackDevServer = require('webpack-dev-server'),
     autoprefixer = require('autoprefixer'),
     del = require('del'),
+    runSequence = require('run-sequence'),
+    ncp = require('ncp').ncp,
     git = require('gulp-git');
 
-function build(env) {
+function build(env, cb) {
     if (!['production', 'development'].some(function(v) { return v === env; })) {
         console.log('bad build argument: ' + env);
         return;
@@ -71,7 +73,8 @@ function build(env) {
         });
     } else {
         compiler.run(function(err, stats) {
-            // TODO
+            if (err) throw err;
+            if (cb) cb();
         });
     }
 }
@@ -88,22 +91,27 @@ gulp.task('debug', ['clean'], function () {
     return build('development');
 });
 
-gulp.task('publish', ['release'], function() {
-    gulp.src('./build/*').pipe(gulp.dest('/tmp/build/'));
-    git.checkout('gh-pages', function(err) {
-        if (err) throw err;
-        gulp.src('/tmp/build/*').pipe(gulp.dest('./'));
-        gulp.src('./*').pipe(git.commit('auto commit', {emitData: true})).
-        on('data', function(data) {
-            console.log(data);
-            git.push('origin/gh-pages', 'gh-pages', function(err) {
-                if (err) throw err;
-                git.checkout('master', function(err) {
-                    if (err) throw err;
-                    del.sync('/tmp/build');
-                    console.log('Auto commit completed.');
-                })
-            })
-        });
-    })
+gulp.task('publish', ['clean'], function() {
+    build('production', function() {
+         ncp('./build', '/tmp/build', function(err) {
+             if (err) throw err;
+             git.checkout('gh-pages', function(err) {
+                 if (err) throw err;
+                 ncp('/tmp/build', './', function(err) {
+                     gulp.src('./*').pipe(git.commit('auto commit', {emitData: true})).
+                     on('data', function(data) {
+                         console.log(data);
+                         git.push('origin/gh-pages', 'gh-pages', function(err) {
+                             if (err) throw err;
+                             git.checkout('master', function(err) {
+                                 if (err) throw err;
+                                 del.sync('/tmp/build');
+                                 console.log('Auto commit completed.');
+                             });
+                         });
+                     });
+                 });
+             });
+         });
+    });
 });
