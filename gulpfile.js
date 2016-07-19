@@ -100,7 +100,10 @@ gulp.task('publish', ['clean'], function() {
              git.checkout('gh-pages', function(err) {
                  if (err) throw err;
                  fs.readdir('/tmp/build/', function(err, files) {
-                     files.forEach(file => fse.copySync(path.resolve('/tmp/build', file), path.resolve('./')));
+                     files.forEach(file => {
+                         console.log(path.resolve('./', file));
+                         fse.copySync(path.resolve('/tmp/build', file), path.resolve('./', file))
+                     });
                  });
              });
          });
