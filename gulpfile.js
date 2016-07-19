@@ -95,7 +95,7 @@ gulp.task('debug', ['clean'], function () {
 
 gulp.task('publish', ['clean'], function() {
     build('production', function() {
-         fse.move('./build', '/tmp/build', function(err) {
+         fse.copy('./build', '/tmp/build', function(err) {
              if (err) throw err;
              git.checkout('gh-pages', function(err) {
                  if (err) throw err;
