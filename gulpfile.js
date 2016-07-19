@@ -7,7 +7,8 @@ var gulp = require('gulp'),
     webpack = require('webpack'),
     webpackDevServer = require('webpack-dev-server'),
     autoprefixer = require('autoprefixer'),
-    del = require('del');
+    del = require('del'),
+    git = require('gulp-git');
 
 function build(env) {
     if (!['production', 'development'].some(function(v) { return v === env; })) {
@@ -88,6 +89,21 @@ gulp.task('debug', ['clean'], function () {
 });
 
 gulp.task('publish', ['release'], function() {
-    // TODO: Copy the contents in `build` dir to the `gh-pages` branch, and
-    // make a commit/push then.
+    gulp.src('./build/*').pipe(gulp.dest('/tmp/build/'));
+    git.checkout('gh-pages', function(err) {
+        if (err) throw err;
+        gulp.src('/tmp/build/*').pipe(gulp.dest('./'));
+        gulp.src('./*').pipe(git.commit('auto commit', {emitData: true})).
+        on('data', function(data) {
+            console.log(data);
+            git.push('origin/gh-pages', 'gh-pages', function(err) {
+                if (err) throw err;
+                git.checkout('master', function(err) {
+                    if (err) throw err;
+                    del.sync('/tmp/build');
+                    console.log('Auto commit completed.');
+                })
+            })
+        });
+    })
 });
