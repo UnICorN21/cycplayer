@@ -9,7 +9,8 @@ var gulp = require('gulp'),
     autoprefixer = require('autoprefixer'),
     del = require('del'),
     runSequence = require('run-sequence'),
-    fs = require('fs-extra'),
+    fs = require('fs'),
+    fse = require('fs-extra'),
     git = require('gulp-git');
 
 function build(env, cb) {
@@ -93,23 +94,12 @@ gulp.task('debug', ['clean'], function () {
 
 gulp.task('publish', ['clean'], function() {
     build('production', function() {
-         fs.copy('./build', '/tmp/build', function(err) {
+         fse.copy('./build', '/tmp/build', function(err) {
              if (err) throw err;
              git.checkout('gh-pages', function(err) {
                  if (err) throw err;
-                 fs.move('/tmp/build/*', './', function(err) {
-                     gulp.src('./*').pipe(git.commit('auto commit', {emitData: true})).
-                     on('data', function(data) {
-                         console.log(data);
-                         // git.push('origin/gh-pages', 'gh-pages', function(err) {
-                         //     if (err) throw err;
-                         //     git.checkout('master', function(err) {
-                         //         if (err) throw err;
-                         //         del.sync('/tmp/build');
-                         //         console.log('Auto commit completed.');
-                         //     });
-                         // });
-                     });
+                 fs.readdir('/tmp/build/', function(err, files) {
+                     files.forEach(file => fse.copySync(file, './'));
                  });
              });
          });
