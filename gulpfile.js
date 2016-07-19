@@ -9,6 +9,7 @@ var gulp = require('gulp'),
     autoprefixer = require('autoprefixer'),
     del = require('del'),
     runSequence = require('run-sequence'),
+    path = require('path'),
     fs = require('fs'),
     fse = require('fs-extra'),
     git = require('gulp-git');
@@ -99,7 +100,7 @@ gulp.task('publish', ['clean'], function() {
              git.checkout('gh-pages', function(err) {
                  if (err) throw err;
                  fs.readdir('/tmp/build/', function(err, files) {
-                     files.forEach(file => fse.copySync(file, './'));
+                     files.forEach(file => fse.copySync(file, path.resolve('./')));
                  });
              });
          });
