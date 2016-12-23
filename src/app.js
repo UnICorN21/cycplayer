@@ -18,7 +18,7 @@ export default class App extends React.Component {
         this.setState({ selectedSong: song });
     }
     render() {
-        var mainElement = (() => {
+        let mainElement = (() => {
            if (this.state.selectedSong) return <SingleSong song={this.state.selectedSong}/>;
            else return <Cover singleSongHandler={this.handleSingleSong.bind(this)}/>;
         })();

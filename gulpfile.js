@@ -21,10 +21,12 @@ function build(env, cb) {
     }
     gulp.src('src/*.html').pipe(gulp.dest('build'));
     var compiler = webpack({
-        entry: "./src/main.js",
+        entry: {
+            main: "./src/main.js",
+        },
         output: {
             path: require('path').resolve('./build/'),
-            filename: 'bundle.js'
+            filename: '[name].bundle.js'
         },
         watch: env === 'development',
         module: {
@@ -36,7 +38,7 @@ function build(env, cb) {
                     ],
                     use: "babel-loader",
                     options: {
-                        presets: ["es2015"]
+                        presets: ["es2015-native-modules", "react"]
                     },
                 },
                 {
@@ -57,12 +59,12 @@ function build(env, cb) {
         devtool: env === 'development' ? 'cheap-eval-source-map' : '',
         plugins: (function() {
             var ret = [
-                new webpack.NoErrorsPlugin()
+                new webpack.NoErrorsPlugin(),
             ];
             if ('development' === env) {
                 ret.push(new webpack.HotModuleReplacementPlugin());
             } else {
-                ret.push(new webpack.optimize.DedupePlugin());
+                ret.push(new webpack.optimize.AggressiveMergingPlugin());
                 ret.push(new webpack.optimize.UglifyJsPlugin({
                     sourceMap: true,
                     minimize: true
