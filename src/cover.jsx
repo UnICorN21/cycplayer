@@ -23,9 +23,9 @@ export default class Cover extends React.Component {
             inputing: false,
             songs: [
                 {
-                    name: 'What if we have never met',
-                    src: '/data/What If We Had Never Met.m4a',
-                    artwork: '/data/What If We Had Never Met.jpg'
+                    name: '孟姜女',
+                    src: '/data/孟姜女.mp3',
+                    artwork: '/data/孟姜女.jpg'
                 }
             ],
         };

@@ -28,26 +28,33 @@ function build(env, cb) {
         },
         watch: env === 'development',
         module: {
-            loaders: [
+            rules: [
+                {
+                    test: /\.jsx?$/,
+                    exclude: [
+                        path.resolve(__dirname, "node_modules")
+                    ],
+                    use: "babel-loader",
+                    options: {
+                        presets: ["es2015"]
+                    },
+                },
                 {
                     test: /\.(svg|png)$/,
-                    loader: "file"
+                    use: "file-loader",
                 },
                 {
                     test: /\.scss$/,
-                    loader: "style!css!postcss-loader!sass"
-                },
-                {
-                    test: /\.jsx?$/,
-                    loader: 'babel',
-                    exclude: /node_modules/,
+                    use: [
+                        "style-loader",
+                        "css-loader",
+                        { loader: "postcss-loader", options: { plugins: () => [autoprefixer] } },
+                        "sass-loader"
+                    ]
                 }
             ]
         },
-        postcss: function() {
-            return [autoprefixer];
-        },
-        devtool: env === 'development' ? 'source-map' : '',
+        devtool: env === 'development' ? 'cheap-eval-source-map' : '',
         plugins: (function() {
             var ret = [
                 new webpack.NoErrorsPlugin()
@@ -56,7 +63,10 @@ function build(env, cb) {
                 ret.push(new webpack.HotModuleReplacementPlugin());
             } else {
                 ret.push(new webpack.optimize.DedupePlugin());
-                ret.push(new webpack.optimize.UglifyJsPlugin());
+                ret.push(new webpack.optimize.UglifyJsPlugin({
+                    sourceMap: true,
+                    minimize: true
+                }));
                 ret.push(new webpack.DefinePlugin({
                     "process.env": {
                         "NODE_ENV": JSON.stringify("production")
