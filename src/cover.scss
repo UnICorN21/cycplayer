@@ -10,9 +10,12 @@
 }
 
 .cover {
-  background: url('./images/netease_music.svg') no-repeat center/90%;
-  background-color: rgb(249, 32, 0);
+  background: rgb(249, 32, 0) url('./images/netease_music.svg') no-repeat center/90%;
   border-radius: 1rem;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 
   .search-input {
     @include make-center();
@@ -26,7 +29,8 @@
 
   .result {
     @include make-center();
-    width: 20rem;
+    top: 51.5%;
+    width: 20.2rem;
     height: 10rem;
     transition: all 500ms;
 

@@ -8,20 +8,28 @@ require('./singlesong.scss');
 
 export default class SingleSong extends React.Component {
     static propTypes = {
-        song: React.PropTypes.object.isRequired, // {name, src, artwork, lyric}
         width: React.PropTypes.number,
         height: React.PropTypes.number,
     };
     static defaultProps = {
-        width: 600,
-        height: 600,
+        width: 1000,
+        height: 1000,
     };
+    loadSong(songId) { // TODO
+        return {
+            name: '孟姜女',
+            src: '/data/孟姜女.mp3',
+            artwork: '/data/孟姜女.jpg'
+        };
+    }
     constructor(props) {
         super(props);
+        const song = this.loadSong(this.props.params['songId']);
         this.state = {
             playing: false,
             progress: 0,
-            hasBackground: this.props.song.artwork !== undefined && this.props.song.artwork.length !== 0,
+            hasBackground: song.artwork !== undefined && song.artwork.length !== 0,
+            song: song,
             canvasLength: Math.min(this.props.width, this.props.height),
             cursorPointLength: 8,
         };
@@ -107,39 +115,53 @@ export default class SingleSong extends React.Component {
         this.setState({ cursorPointLength: 8 + 20 * 3 * mean / (255 * this.analyser.frequencyBinCount) });
     }
     render() {
-        var artworkStyle = {
-            zIndex: '-1',
-            position: 'absolute',
-            width: this.props.width,
-            height: this.props.height,
-            background: this.state.hasBackground ? `url('${this.props.song.artwork}')` : 'black',
+        let artworkStyle = {
+            background: this.state.hasBackground ? `url('${this.state.song.artwork}')` : 'black',
             backgroundSize: '100%',
+            position: 'absolute',
+            width: this.state.canvasLength - 200,
+            height: this.state.canvasLength - 200,
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            borderRadius: '50%',
+            animation: this.state.playing ? 'revolve 24s linear infinite' : ''
         };
         return (
             <div className="song-wrapper">
-                <div className="artwork" style={artworkStyle}/>
-                <h3 className={this.state.playing ? 'playing' : ''}>{this.props.song.name}</h3>
-                <div className="progress-bar" style={ {width: this.state.canvasLength - 250} }>
-                    <div className="progress-bar-wrapper" ref="progressbar"
-                         onClick={this.seekAudio.bind(this)}>
-                    <hr className="timeline" style={ {width: this.state.canvasLength - 250} }/>
-                    <div className={`cursor-border ${this.state.playing ? 'playing' : ''}`} style={ {left: `${this.state.progress}%`} }/>
-                    <div className="cursor-point" style={ {
+                <div className="under-background" style={ {
+                    position: 'absolute', width: '100%', height: '100%',
+                    background: this.state.hasBackground ? `url('${this.state.song.artwork}')` : 'black',
+                    backgroundSize: '100%',
+                    zIndex: 1 } }></div>
+                <div className="background" style={ {
+                    position: 'absolute', width: '100%', height: '100%',
+                    background: 'rgba(0, 0, 0, 0.9)', zIndex: 10 } }></div>
+                <div className="upper" style={{ width: this.props.width, height: this.props.height }}>
+                    <div className="artwork" style={artworkStyle}/>
+                    <h3 className={this.state.playing ? 'playing' : ''}>{this.state.song.name}</h3>
+                    <div className="progress-bar" style={ {width: this.state.canvasLength - 250} }>
+                        <div className="progress-bar-wrapper" ref="progressbar"
+                            onClick={this.seekAudio.bind(this)}>
+                        <hr className="timeline" style={ {width: this.state.canvasLength - 250} }/>
+                        <div className={`cursor-border ${this.state.playing ? 'playing' : ''}`} style={ {left: `${this.state.progress}%`} }/>
+                        <div className="cursor-point" style={ {
                         left: `${this.state.progress}%`,
                         width: this.state.cursorPointLength,
                         height: this.state.cursorPointLength,
-                    } }/>
+                        } }/>
+                        </div>
                     </div>
-                </div>
-                <div className="control-btn" onClick={this.control.bind(this)}>
-                    <div className={`play-btn ${this.state.playing ? '' : 'onshow'}`}/>
-                    <div className={`pause-btn ${this.state.playing ? 'onshow': ''}`}>
-                        <div className="left"/>
-                        <div className="right"/>
+                    <div className="control-btn" onClick={this.control.bind(this)}>
+                        <div className={`play-btn ${this.state.playing ? '' : 'onshow'}`}/>
+                        <div className={`pause-btn ${this.state.playing ? 'onshow': ''}`}>
+                            <div className="left"/>
+                            <div className="right"/>
+                        </div>
                     </div>
+                    <audio ref="audio" src={this.state.song.src} autoPlay="true"/>
+                    <canvas ref="canvas" width={this.state.canvasLength} height={this.state.canvasLength}/>
                 </div>
-                <audio ref="audio" src={this.props.song.src} autoPlay="true"/>
-                <canvas ref="canvas" width={this.state.canvasLength} height={this.state.canvasLength}/>
             </div>
         );
     }

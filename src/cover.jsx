@@ -3,6 +3,7 @@
  * Created by Huxley on 7/18/16.
  */
 import React from 'react';
+import Link from 'react-router/Link'
 require('./cover.scss');
 
 export default class Cover extends React.Component {
@@ -12,8 +13,8 @@ export default class Cover extends React.Component {
         singleSongHandler: React.PropTypes.func,
     };
     static defaultProps = {
-        width: 600,
-        height: 600,
+        width: 800,
+        height: 800,
         singleSongHandler: Cover.handleMusicSelectStub,
     };
     constructor(props) {
@@ -23,6 +24,7 @@ export default class Cover extends React.Component {
             inputing: false,
             songs: [
                 {
+                    id: 'meng1',
                     name: '孟姜女',
                     src: '/data/孟姜女.mp3',
                     artwork: '/data/孟姜女.jpg'
@@ -63,11 +65,12 @@ export default class Cover extends React.Component {
                 } }>
                     <div className="result-wrapper">
                         <div className="loading" style={ {
+                            display: this.state.songs.length > 0 ? 'none' : 'block',
                             visibility: this.state.songs.length > 0 ? 'hidden' : 'visible',
                             opacity: this.state.songs.length > 0 ? 0 : 1,
                         } }/>
                         <ul className="songs">{this.state.songs.map(song => {
-                            return <li key={song.name} onClick={() => {this.props.singleSongHandler(song)}}>{song.name}</li>
+                            return (<li key={song.id}><Link to={`/song/${song.id}`}>{song.name}</Link></li>);
                         })}</ul>
                     </div>
                 </div>
