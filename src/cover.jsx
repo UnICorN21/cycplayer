@@ -13,8 +13,8 @@ export default class Cover extends React.Component {
         singleSongHandler: React.PropTypes.func,
     };
     static defaultProps = {
-        width: 800,
-        height: 800,
+        width: 30,
+        height: 30,
         singleSongHandler: Cover.handleMusicSelectStub,
     };
     constructor(props) {
@@ -54,11 +54,11 @@ export default class Cover extends React.Component {
     }
     render() {
         return (
-            <div className="cover" style={ {width: this.props.width, height: this.props.height} }>
+            <div className="cover" style={ {width: `${this.props.width}rem`, height: `${this.props.height}rem`} }>
                 <input ref="input" className="search-input" autoFocus="true"
                        onInput={this.handleSearchInput.bind(this)}
                        placeholder="Enter the song name here..."
-                       style={ {top: this.state.inputing ? '40%' : '50%'} }/>
+                       style={ {top: this.state.inputing ? '28.6%' : '50%'} }/>
                 <div className="result" style={ {
                     visibility: this.state.inputing ? 'visible' : 'hidden',
                     opacity: this.state.inputing ? 1 : 0,

@@ -20,6 +20,17 @@
   display: inline-block;
   position: relative;
   width: 100%; height: 100%;
+  .back-arrow {
+    position: absolute;
+    color:white;
+    z-index: 10000;
+    opacity: 0;
+    transition: opacity 800ms;
+    i { font-size: 4rem; }
+    &:hover {
+      opacity: 1;
+    }
+  }
   .upper {
     z-index: 110;
     display: block;

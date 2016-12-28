@@ -9,15 +9,6 @@ import Cover from './cover.jsx';
 import SingleSong from './singlesong.jsx';
 
 export default class App extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            selectedSong: null
-        }
-    }
-    handleSingleSong(song) {
-        this.setState({ selectedSong: song });
-    }
     render() {
         return (
             <BrowserRouter>

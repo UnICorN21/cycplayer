@@ -4,6 +4,7 @@
  */
 import React from 'react';
 import ReactDOM from 'react-dom';
+import Link from 'react-router/Link';
 require('./singlesong.scss');
 
 export default class SingleSong extends React.Component {
@@ -60,13 +61,18 @@ export default class SingleSong extends React.Component {
 
         var canvasDOM = ReactDOM.findDOMNode(this.refs.canvas);
         this.canvasCtx = canvasDOM.getContext('2d');
-        this.animate();
+        this._onScreen = true;
+        this.control();
+    }
+    componentWillUnmount() {
+        this._onScreen = false;
     }
     control() {
         this.setState({ playing: !this.state.playing });
         setTimeout(() => {
             if (this.state.playing) this.audioDOM.play();
             else this.audioDOM.pause();
+            this.animate();
         }, 0);
     }
     seekAudio(event) {
@@ -75,6 +81,8 @@ export default class SingleSong extends React.Component {
         this.audioDOM.currentTime = this.audioDOM.duration * offset / total;
     }
     animate() {
+        if (!this._onScreen) return;
+
         this.canvasCtx.clearRect(0, 0, this.props.width, this.props.height);
 
         let centerX = this.state.canvasLength / 2,
@@ -119,8 +127,8 @@ export default class SingleSong extends React.Component {
             background: this.state.hasBackground ? `url('${this.state.song.artwork}')` : 'black',
             backgroundSize: '100%',
             position: 'absolute',
-            width: this.state.canvasLength - 200,
-            height: this.state.canvasLength - 200,
+            width: this.state.canvasLength - 400,
+            height: this.state.canvasLength - 400,
             top: '50%',
             left: '50%',
             transform: 'translate(-50%, -50%)',
@@ -129,6 +137,7 @@ export default class SingleSong extends React.Component {
         };
         return (
             <div className="song-wrapper">
+                <Link to='/' className="back-arrow"><i className="material-icons">keyboard_backspace</i></Link>
                 <div className="under-background" style={ {
                     position: 'absolute', width: '100%', height: '100%',
                     background: this.state.hasBackground ? `url('${this.state.song.artwork}')` : 'black',

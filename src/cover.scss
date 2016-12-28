@@ -19,20 +19,20 @@
 
   .search-input {
     @include make-center();
-    width: 18rem;
-    height: 1.5rem;
+    width: 27rem;
+    height: 2.6rem;
     padding: 0 1rem;
-    font-size: 1rem;
+    font-size: 2rem;
     box-shadow: inset 0 0 1px white;
     transition: all 500ms;
   }
 
   .result {
     @include make-center();
-    top: 51.5%;
-    width: 20.2rem;
+    width: 29.2rem;
     height: 10rem;
     transition: all 500ms;
+    font-size: 2rem;
 
     .result-wrapper {
       position: relative;
@@ -60,6 +60,10 @@
           list-style: none;
           padding: 2px;
           border-bottom: 1px solid rgba(100, 100, 100, 0.4);
+          a {
+            text-decoration: none;
+            color: black;
+          }
           &:hover {
             background: rgba(249, 32, 0, 0.2);
           }
