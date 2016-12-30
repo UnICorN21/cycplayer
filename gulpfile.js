@@ -23,6 +23,7 @@ function build(env, cb) {
     var compiler = webpack({
         entry: {
             main: "./src/main.js",
+            server: "./src/server.js",
         },
         output: {
             path: require('path').resolve('./build/'),
@@ -38,7 +39,7 @@ function build(env, cb) {
                     ],
                     use: "babel-loader",
                     options: {
-                        presets: ["es2015-native-modules", "react"]
+                        presets: ["es2015-native-modules", "react", "node6"]
                     },
                 },
                 {
