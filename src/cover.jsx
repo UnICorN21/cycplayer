@@ -5,17 +5,16 @@
 import React from 'react';
 import Link from 'react-router/Link'
 require('./cover.scss');
+let Fuse = require('fuse.js/src/fuse.min');
 
 export default class Cover extends React.Component {
     static propTypes = {
         width: React.PropTypes.number,
         height: React.PropTypes.number,
-        singleSongHandler: React.PropTypes.func,
     };
     static defaultProps = {
         width: 30,
         height: 30,
-        singleSongHandler: Cover.handleMusicSelectStub,
     };
     constructor(props) {
         super(props);
@@ -28,8 +27,15 @@ export default class Cover extends React.Component {
                     name: '孟姜女',
                     src: '/data/孟姜女.mp3',
                     artwork: '/data/孟姜女.jpg'
+                },
+                {
+                    id: 'tayi',
+                    name: '"たいせつなきみのために、ぼくにできるいちばんのこと"',
+                    src: '/data/"たいせつなきみのために、ぼくにできるいちばんのこと".mp3',
+                    artwork: '/data/"たいせつなきみのために、ぼくにできるいちばんのこと".jpg'
                 }
             ],
+            searchResults: []
         };
     }
     handleSearchInput() {
@@ -39,8 +45,12 @@ export default class Cover extends React.Component {
     search(keyword) {
         const freq = 2;
         let _search = (keyword) => {
-            // TODO
-            console.log('trigger a search with', keyword);
+            let fuse = new Fuse(this.state.songs, {
+                keys: ["name"],
+                maxPatternLength: 32,
+                minMatchCharLength: 1
+            });
+            this.setState({ searchResults: fuse.search(keyword) });
         };
         if (this.searchHelper.last !== keyword && !this.searchHelper.handler)
             this.searchHelper.handler = setTimeout(() => {
@@ -49,10 +59,11 @@ export default class Cover extends React.Component {
                 this.searchHelper.handler = null;
             }, 1000 / freq);
     }
-    static handleMusicSelectStub(song) {
-        console.log(song);
-    }
     render() {
+        let shouldShowResultsPanel = this.state.searchResults.length > 0;
+        let resultsDOM = this.state.searchResults.map(song => {
+            return (<li key={song.id}><Link to={`/song/${song.id}`}>{song.name}</Link></li>);
+        });
         return (
             <div className="cover" style={ {width: `${this.props.width}rem`, height: `${this.props.height}rem`} }>
                 <input ref="input" className="search-input" autoFocus="true"
@@ -65,13 +76,11 @@ export default class Cover extends React.Component {
                 } }>
                     <div className="result-wrapper">
                         <div className="loading" style={ {
-                            display: this.state.songs.length > 0 ? 'none' : 'block',
-                            visibility: this.state.songs.length > 0 ? 'hidden' : 'visible',
-                            opacity: this.state.songs.length > 0 ? 0 : 1,
+                            display: shouldShowResultsPanel ? 'none' : 'block',
+                            visibility: shouldShowResultsPanel ? 'hidden' : 'visible',
+                            opacity: shouldShowResultsPanel ? 0 : 1,
                         } }/>
-                        <ul className="songs">{this.state.songs.map(song => {
-                            return (<li key={song.id}><Link to={`/song/${song.id}`}>{song.name}</Link></li>);
-                        })}</ul>
+                        <ul className="songs">{resultsDOM}</ul>
                     </div>
                 </div>
             </div>

@@ -13,14 +13,18 @@ export default class SingleSong extends React.Component {
         height: React.PropTypes.number,
     };
     static defaultProps = {
-        width: 1000,
-        height: 1000,
+        width: 900,
+        height: 900,
     };
     loadSong(songId) { // TODO
-        return {
+        return songId === 'meng1' ? {
             name: '孟姜女',
             src: '/data/孟姜女.mp3',
             artwork: '/data/孟姜女.jpg'
+        } : {
+            name: '"たいせつなきみのために、ぼくにできるいちばんのこと"',
+            src: '/data/"たいせつなきみのために、ぼくにできるいちばんのこと".mp3',
+            artwork: '/data/"たいせつなきみのために、ぼくにできるいちばんのこと".jpg'
         };
     }
     constructor(props) {
@@ -53,13 +57,13 @@ export default class SingleSong extends React.Component {
         this.audioDOM.addEventListener('timeupdate', setProgress);
         this.audioDOM.addEventListener('seeked', setProgress);
 
-        var source = this.audioCtx.createMediaElementSource(this.audioDOM);
+        let source = this.audioCtx.createMediaElementSource(this.audioDOM);
         source.connect(this.analyser);
         this.analyser.connect(this.audioCtx.destination);
         this.timeBuff = new Uint8Array(this.analyser.frequencyBinCount);
         this.freqBuff = new Uint8Array(this.analyser.frequencyBinCount);
 
-        var canvasDOM = ReactDOM.findDOMNode(this.refs.canvas);
+        let canvasDOM = ReactDOM.findDOMNode(this.refs.canvas);
         this.canvasCtx = canvasDOM.getContext('2d');
         this._onScreen = true;
         this.control();
@@ -92,9 +96,9 @@ export default class SingleSong extends React.Component {
             this.analyser.getByteFrequencyData(this.freqBuff);
             this.analyser.getByteTimeDomainData(this.timeBuff);
         }
-        var mean = 0;
+        let mean = 0;
         requestAnimationFrame(this.animate.bind(this));
-        for (var i = 0; i < this.analyser.frequencyBinCount; i += 3) {
+        for (let i = 0; i < this.analyser.frequencyBinCount; i += 3) {
             if (this.state.playing) mean += this.freqBuff[i];
             let theta = i * Math.PI / (this.analyser.frequencyBinCount),
                 inside = this.state.progress > 1 ? (this.timeBuff[i] - 128) * radius / 128 : -1,
@@ -135,6 +139,9 @@ export default class SingleSong extends React.Component {
             borderRadius: '50%',
             animation: this.state.playing ? 'revolve 24s linear infinite' : ''
         };
+        const bowdlerize = name => {
+            return name.length > 10 ? name.substr(0, 10) + "..." : name;
+        };
         return (
             <div className="song-wrapper">
                 <Link to='/' className="back-arrow"><i className="material-icons">keyboard_backspace</i></Link>
@@ -142,13 +149,14 @@ export default class SingleSong extends React.Component {
                     position: 'absolute', width: '100%', height: '100%',
                     background: this.state.hasBackground ? `url('${this.state.song.artwork}')` : 'black',
                     backgroundSize: '100%',
+                    filter: 'blur(6px)',
                     zIndex: 1 } }></div>
                 <div className="background" style={ {
                     position: 'absolute', width: '100%', height: '100%',
-                    background: 'rgba(0, 0, 0, 0.9)', zIndex: 10 } }></div>
+                    background: 'rgba(0, 0, 0, 0.88)', zIndex: 10 } }></div>
                 <div className="upper" style={{ width: this.props.width, height: this.props.height }}>
                     <div className="artwork" style={artworkStyle}/>
-                    <h3 className={this.state.playing ? 'playing' : ''}>{this.state.song.name}</h3>
+                    <h3 className={this.state.playing ? 'playing' : ''}>{bowdlerize(this.state.song.name)}</h3>
                     <div className="progress-bar" style={ {width: this.state.canvasLength - 250} }>
                         <div className="progress-bar-wrapper" ref="progressbar"
                             onClick={this.seekAudio.bind(this)}>

@@ -45,6 +45,7 @@
       font-size: 4rem;
       margin: 10px;
       color: white;
+      text-align: center;
       &.playing {
         animation: 5s ease-in-out infinite songNameEffect;
       }
