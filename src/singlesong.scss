@@ -46,8 +46,14 @@
       margin: 10px;
       color: white;
       text-align: center;
+      z-index: 10000;
       &.playing {
+        opacity: 0;
+        transition: opacity 400ms;
         animation: 5s ease-in-out infinite songNameEffect;
+        &:hover {
+          opacity: 1;
+        }
       }
     }
 
