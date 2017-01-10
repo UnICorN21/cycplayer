@@ -91,7 +91,7 @@ export default class SingleSong extends React.Component {
 
         let centerX = this.state.canvasLength / 2,
             centerY = this.state.canvasLength / 2,
-            radius = this.state.canvasLength / 2 - 100;
+            radius = this.state.canvasLength / 2 - 90;
         if (this.state.playing) {
             this.analyser.getByteFrequencyData(this.freqBuff);
             this.analyser.getByteTimeDomainData(this.timeBuff);
@@ -131,8 +131,8 @@ export default class SingleSong extends React.Component {
             background: this.state.hasBackground ? `url('${this.state.song.artwork}')` : 'black',
             backgroundSize: '100%',
             position: 'absolute',
-            width: this.state.canvasLength - 400,
-            height: this.state.canvasLength - 400,
+            width: this.state.canvasLength - 380,
+            height: this.state.canvasLength - 380,
             top: '50%',
             left: '50%',
             transform: 'translate(-50%, -50%)',
@@ -157,8 +157,11 @@ export default class SingleSong extends React.Component {
                 <div className="upper" style={{ width: this.props.width, height: this.props.height }}>
                     <div className="artwork" style={artworkStyle}/>
                     <h3 className={this.state.playing ? 'playing' : ''}>{bowdlerize(this.state.song.name)}</h3>
-                    <div className="progress-bar" style={ {width: this.state.canvasLength - 250} }>
-                        <div className="progress-bar-wrapper" ref="progressbar"
+                    <div className="progress-bar" style={ {
+                        width: this.state.canvasLength - 250,
+                        zIndex: 10000,
+                    } }>
+                        <div className={"progress-bar-wrapper " + (this.state.playing ? "playing" : "")} ref="progressbar"
                             onClick={this.seekAudio.bind(this)}>
                         <hr className="timeline" style={ {width: this.state.canvasLength - 250} }/>
                         <div className={`cursor-border ${this.state.playing ? 'playing' : ''}`} style={ {left: `${this.state.progress}%`} }/>
